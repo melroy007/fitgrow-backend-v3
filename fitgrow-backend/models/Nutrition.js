@@ -1,4 +1,3 @@
-```javascript
 const mongoose = require('mongoose');
 
 const nutritionSchema = new mongoose.Schema({
@@ -33,4 +32,3 @@ const nutritionSchema = new mongoose.Schema({
 nutritionSchema.index({ userId: 1, date: -1 });
 
 module.exports = mongoose.model('Nutrition', nutritionSchema);
-```
