@@ -1,4 +1,3 @@
-```javascript
 const mongoose = require('mongoose');
 
 const activitySchema = new mongoose.Schema({
@@ -29,4 +28,3 @@ const activitySchema = new mongoose.Schema({
 activitySchema.index({ userId: 1, date: -1 });
 
 module.exports = mongoose.model('Activity', activitySchema);
-```
