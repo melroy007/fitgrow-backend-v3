@@ -1,4 +1,3 @@
-```javascript
 const express = require('express');
 const Activity = require('../models/Activity');
 const auth = require('../middleware/auth');
@@ -100,4 +99,3 @@ router.get('/stats/weekly', auth, async (req, res) => {
 });
 
 module.exports = router;
-```
