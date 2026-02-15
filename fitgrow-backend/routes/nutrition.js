@@ -1,4 +1,3 @@
-```javascript
 const express = require('express');
 const Nutrition = require('../models/Nutrition');
 const auth = require('../middleware/auth');
@@ -77,5 +76,3 @@ router.get('/meals', auth, async (req, res) => {
 });
 
 module.exports = router;
-```
-
