@@ -1,4 +1,3 @@
-```javascript
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -66,4 +65,3 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
   console.log(`📊 Environment: ${process.env.NODE_ENV}`);
 });
-```
