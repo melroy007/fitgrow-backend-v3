@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#FF6B35">
+  <title>FitTrack - Complete Fitness App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">
+        <span class="logo-icon">💪</span>
+        <span class="logo-text">FitTrack</span>
+      </div>
+      
+      <nav class="nav">
+        <div class="nav-item active" data-page="dashboard">
+          <span class="nav-icon">📊</span>
+          <span class="nav-text">Dashboard</span>
+        </div>
+        <div class="nav-item" data-page="scanner">
+          <span class="nav-icon">📸</span>
+          <span class="nav-text">Food Scanner</span>
+        </div>
+        <div class="nav-item" data-page="workouts">
+          <span class="nav-icon">🏋️</span>
+          <span class="nav-text">Workouts</span>
+        </div>
+        <div class="nav-item" data-page="nutrition">
+          <span class="nav-icon">🥗</span>
+          <span class="nav-text">Nutrition</span>
+        </div>
+        <div class="nav-item" data-page="progress">
+          <span class="nav-icon">📈</span>
+          <span class="nav-text">Progress</span>
+        </div>
+        <div class="nav-item" data-page="settings">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-text">Settings</span>
+        </div>
+      </nav>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Page -->
+      <div id="dashboardPage" class="page active">
+        <div class="header">
+          <h1>Welcome back, Athlete! 🔥</h1>
+          <p>Start your day strong - track your progress</p>
+        </div>
+        
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon calories">
+                <span>🔥</span>
+              </div>
+              <div class="stat-trend neutral">Start</div>
+            </div>
+            <div class="stat-label">Calories Burned</div>
+            <div class="stat-value">0</div>
+            <div class="stat-subtext">Goal: 3,000 kcal</div>
+            <div class="stat-progress">
+              <div class="stat-progress-bar" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon steps">
+                <span>👟</span>
+              </div>
+              <div class="stat-trend neutral">Start</div>
+            </div>
+            <div class="stat-label">Steps Today</div>
+            <div class="stat-value">0</div>
+            <div class="stat-subtext">Goal: 10,000 steps</div>
+            <div class="stat-progress">
+              <div class="stat-progress-bar" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon water">
+                <span>💧</span>
+              </div>
+              <div class="stat-trend neutral">Start</div>
+            </div>
+            <div class="stat-label">Water Intake</div>
+            <div class="stat-value">0.0L</div>
+            <div class="stat-subtext">Goal: 2.5L</div>
+            <div class="stat-progress">
+              <div class="stat-progress-bar" style="width: 0%"></div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-header">
+              <div class="stat-icon sleep">
+                <span>😴</span>
+              </div>
+              <div class="stat-trend neutral">Start</div>
+            </div>
+            <div class="stat-label">Sleep</div>
+            <div class="stat-value">0.0h</div>
+            <div class="stat-subtext">Goal: 8h</div>
+            <div class="stat-progress">
+              <div class="stat-progress-bar" style="width: 0%"></div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Main Grid -->
+        <div class="main-grid">
+          <!-- Activity Chart -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Weekly Activity</div>
+              <div class="card-action">View Details →</div>
+            </div>
+            <div class="chart-placeholder">
+              <div class="chart-bars">
+                <div class="chart-bar" style="height: 0%"></div>
+                <div class="chart-bar" style="height: 0%"></div>
+                <div class="chart-bar" style="height: 0%"></div>
+                <div class="chart-bar" style="height: 0%"></div>
+                <div class="chart-bar" style="height: 0%"></div>
+                <div class="chart-bar" style="height: 0%"></div>
+                <div class="chart-bar" style="height: 0%"></div>
+              </div>
+              <div class="chart-labels">
+                <span>Mon</span>
+                <span>Tue</span>
+                <span>Wed</span>
+                <span>Thu</span>
+                <span>Fri</span>
+                <span>Sat</span>
+                <span>Sun</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Quick Actions -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Quick Actions</div>
+            </div>
+            
+            <div class="quick-actions">
+              <button class="action-btn" data-page="workouts">
+                <span class="action-icon">🏋️</span>
+                <span class="action-text">Log Workout</span>
+              </button>
+              <button class="action-btn" data-page="scanner">
+                <span class="action-icon">📸</span>
+                <span class="action-text">Scan Food</span>
+              </button>
+              <button class="action-btn" id="addWaterBtn">
+                <span class="action-icon">💧</span>
+                <span class="action-text">Add Water</span>
+              </button>
+              <button class="action-btn" id="quickNoteBtn">
+                <span class="action-icon">📝</span>
+                <span class="action-text">Quick Note</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Food Scanner Page -->
+      <div id="scannerPage" class="page">
+        <div class="header">
+          <h1>Food Scanner 📸</h1>
+          <p>Scan your food to get instant nutritional info</p>
+        </div>
+        
+        <div class="scanner-container">
+          <div class="scanner-card">
+            <!-- Start Screen -->
+            <div id="startScreen" class="start-screen">
+              <div class="camera-icon-large">
+                <span>📷</span>
+              </div>
+              
+              <button class="btn btn-primary" id="startCameraBtn">
+                <span>📸</span> Start Scanning
+              </button>
+            </div>
+            
+            <!-- Camera Screen -->
+            <div id="cameraScreen" class="hidden">
+              <div class="video-container">
+                <video id="video" autoplay playsinline></video>
+                <div class="camera-overlay"></div>
+                <button class="capture-btn" id="captureBtn">
+                  <div class="capture-btn-inner">
+                    <span>📷</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Analyzing Screen -->
+            <div id="analyzingScreen" class="analyzing hidden">
+              <div class="spinner"></div>
+              <p class="analyzing-title">Analyzing your food...</p>
+              <p class="analyzing-subtitle">This will just take a moment</p>
+            </div>
+            
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="results hidden">
+              <img id="capturedImage" src="" alt="Captured food" class="food-image">
+              
+              <div class="food-name">
+                <h2 id="foodName"></h2>
+                <p id="servingSize"></p>
+              </div>
+              
+              <!-- Portion Size Selector -->
+              <div class="portion-selector">
+                <div class="portion-header">
+                  <h3><span>🍽️</span> Adjust Portion Size</h3>
+                  <span class="portion-multiplier" id="portionMultiplier">1x</span>
+                </div>
+                
+                <div class="portion-presets">
+                  <button class="portion-btn" data-portion="0.5">Half</button>
+                  <button class="portion-btn active" data-portion="1">1x</button>
+                  <button class="portion-btn" data-portion="1.5">1.5x</button>
+                  <button class="portion-btn" data-portion="2">Double</button>
+                </div>
+                
+                <div class="portion-slider-container">
+                  <div class="portion-slider-label">
+                    <span>Custom Amount</span>
+                    <span id="sliderValue">100%</span>
+                  </div>
+                  <input 
+                    type="range" 
+                    class="portion-slider" 
+                    id="portionSlider"
+                    min="25" 
+                    max="300" 
+                    value="100" 
+                    step="5"
+                  >
+                </div>
+              </div>
+              
+              <div class="calories-card">
+                <div class="label">Total Calories</div>
+                <div class="value" id="calories">0</div>
+              </div>
+              
+              <div class="macros-grid">
+                <div class="macro-card protein">
+                  <div class="label">Protein</div>
+                  <div class="value" id="protein">0g</div>
+                </div>
+                
+                <div class="macro-card carbs">
+                  <div class="label">Carbs</div>
+                  <div class="value" id="carbs">0g</div>
+                </div>
+                
+                <div class="macro-card fat">
+                  <div class="label">Fat</div>
+                  <div class="value" id="fat">0g</div>
+                </div>
+                
+                <div class="macro-card fiber">
+                  <div class="label">Fiber</div>
+                  <div class="value" id="fiber">0g</div>
+                </div>
+              </div>
+              
+              <div class="micro-nutrients">
+                <div class="micro-card">
+                  <div class="label">Sugar</div>
+                  <div class="value" id="sugar">0g</div>
+                </div>
+                <div class="micro-card">
+                  <div class="label">Sodium</div>
+                  <div class="value" id="sodium">0mg</div>
+                </div>
+              </div>
+              
+              <button class="btn btn-primary btn-full" id="resetScanBtn">
+                <span>🔄</span> Scan Another Item
+              </button>
+            </div>
+            
+            <!-- Error Message -->
+            <div id="errorMessage" class="error hidden"></div>
+          </div>
+        </div>
+        
+        <canvas id="canvas" style="display: none;"></canvas>
+      </div>
+      
+      <!-- Placeholder Pages -->
+      <div id="workoutsPage" class="page">
+        <div class="header">
+          <h1>Workouts 🏋️</h1>
+          <p>Track and plan your workout routines</p>
+        </div>
+        <div class="card placeholder-card">
+          <div class="placeholder-icon">🏋️</div>
+          <h2>Workouts Coming Soon</h2>
+          <p>This feature is under development</p>
+        </div>
+      </div>
+      
+      <div id="nutritionPage" class="page">
+        <div class="header">
+          <h1>Nutrition 🥗</h1>
+          <p>Track your daily nutrition and meals</p>
+        </div>
+        <div class="card placeholder-card">
+          <div class="placeholder-icon">🥗</div>
+          <h2>Nutrition Tracking Coming Soon</h2>
+          <p>This feature is under development</p>
+        </div>
+      </div>
+      
+      <div id="progressPage" class="page">
+        <div class="header">
+          <h1>Progress 📈</h1>
+          <p>View your fitness journey and achievements</p>
+        </div>
+        <div class="card placeholder-card">
+          <div class="placeholder-icon">📈</div>
+          <h2>Progress Tracking Coming Soon</h2>
+          <p>This feature is under development</p>
+        </div>
+      </div>
+      
+      <div id="settingsPage" class="page">
+        <div class="header">
+          <h1>Settings ⚙️</h1>
+          <p>Customize your FitTrack experience</p>
+        </div>
+        <div class="card placeholder-card">
+          <div class="placeholder-icon">⚙️</div>
+          <h2>Settings Coming Soon</h2>
+          <p>This feature is under development</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <script src="app.js"></script>
+</body>
+</html>
