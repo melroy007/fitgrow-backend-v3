@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <title>FitGrow - Complete Fitness Tracker</title>
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiRml0R3JvdyIsInNob3J0X25hbWUiOiJGaXRHcm93IiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbCwlM0NzdmclMjB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnJTIwdmlld0JveD0nMCUyMDAlMjAxMDAlMjAxMDAnJTNFJTNDcmVjdCUyMGZpbGw9JyUyMzNCODJGNiclMjB3aWR0aD0nMTAwJyUyMGhlaWdodD0nMTAwJy8lM0UlM0N0ZXh0JTIweSc1MCclMjBmb250LXNpemU9JzUwJyUyMHRleHQtYW5jaG9yPSdtaWRkbGUnJTIweD0nNTAlMjUlMjclM0UlRjAlOUYlOTIlQUElM0MvdGV4dCUzRSUzQy9zdmclM0UiLCJzaXplcyI6IjUxMng1MTIiLCJ0eXBlIjoiaW1hZ2Uvc3ZnK3htbCJ9XSwiZGlzcGxheSI6InN0YW5kYWxvbmUiLCJiYWNrZ3JvdW5kX2NvbG9yIjoiIzAwMDAwMCIsInRoZW1lX2NvbG9yIjoiIzNCODJGNiJ9">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}:root{--primary:#3B82F6;--primary-dark:#2563EB;--bg:#000;--card:#0A0A0A;--light:#1A1A1A;--text:#FFF;--muted:#9CA3AF;--border:#262626;--success:#10B981;--danger:#EF4444}body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}.hidden{display:none!important}
+    .hamburger{position:fixed;top:20px;left:20px;z-index:1001;width:40px;height:40px;background:var(--card);border:1px solid var(--border);border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer}
+    .hamburger span{width:20px;height:2px;background:var(--text);transition:all 0.3s}
+    .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+    .hamburger.active span:nth-child(2){opacity:0}
+    .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(7px,-7px)}
+    .overlay-menu{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:999;opacity:0;pointer-events:none;transition:opacity 0.3s}
+    .overlay-menu.active{opacity:1;pointer-events:all}
+    .sidebar{position:fixed;top:0;left:-280px;width:280px;height:100vh;background:var(--card);border-right:1px solid var(--border);z-index:1000;transition:left 0.3s;overflow-y:auto;padding:80px 20px 20px}
+    .sidebar.active{left:0}
+    .logo{font-size:24px;font-weight:800;color:var(--primary);margin-bottom:30px;text-align:center}
+    .nav-item{padding:14px 16px;margin-bottom:8px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:12px;font-weight:600;color:var(--muted);transition:all 0.2s}
+    .nav-item:hover{background:var(--light);color:var(--text)}
+    .nav-item.active{background:var(--primary);color:#fff}
+    .nav-icon{font-size:20px}
+    .main{padding:80px 20px 20px;max-width:1200px;margin:0 auto}
+    .page{display:none;animation:fadeIn 0.3s}
+    .page.active{display:block}
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .page-header{margin-bottom:24px}
+    .page-header h1{font-size:28px;font-weight:800;margin-bottom:8px}
+    .page-header p{color:var(--muted);font-size:14px}
+    .welcome-banner{background:linear-gradient(135deg,var(--primary),var(--primary-dark));padding:24px;border-radius:12px;margin-bottom:24px;text-align:center}
+    .welcome-banner h2{font-size:24px;font-weight:800;margin-bottom:4px}
+    .welcome-banner p{font-size:14px;opacity:0.9}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-bottom:24px}
+    .stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all 0.3s;cursor:pointer}
+    .stat-card:hover{border-color:var(--primary);transform:translateY(-2px)}
+    .stat-icon{width:48px;height:48px;background:var(--light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:12px}
+    .stat-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+    .stat-value{font-size:36px;font-weight:800;margin-bottom:8px}
+    .stat-goal{font-size:12px;color:var(--muted);margin-bottom:12px}
+    .progress-bar{height:6px;background:var(--light);border-radius:10px;overflow:hidden;margin-bottom:12px}
+    .progress-fill{height:100%;background:var(--primary);border-radius:10px;transition:width 0.5s;width:0%}
+    .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);z-index:2000;display:flex;align-items:center;justify-content:center}
+    .modal-content{background:var(--card);border:1px solid var(--border);border-radius:16px;width:90%;max-width:400px;max-height:90vh;overflow-y:auto}
+    .modal-header{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+    .modal-header h2{font-size:20px;font-weight:800}
+    .modal-close{background:none;border:none;color:var(--muted);font-size:28px;cursor:pointer}
+    .modal-body{padding:20px}
+    .form-group{margin-bottom:16px}
+    .form-label{display:block;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+    .form-input,.form-select{width:100%;padding:12px 16px;background:var(--light);border:2px solid var(--border);border-radius:8px;color:var(--text);font-size:15px;font-family:inherit}
+    .form-input:focus,.form-select:focus{outline:none;border-color:var(--primary)}
+    .btn{padding:12px 24px;border:none;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit;transition:all 0.2s}
+    .btn-primary{background:var(--primary);color:#fff}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .btn-full{width:100%}
+    .btn-secondary{background:var(--light);color:var(--text)}
+    .btn-secondary:hover{background:var(--primary);color:#fff}
+    .btn-danger{background:var(--danger);color:#fff}
+    .camera-container{position:relative;width:100%;max-width:500px;margin:0 auto}
+    .camera-container video{width:100%;border-radius:12px}
+    .camera-container canvas{display:none}
+    .camera-controls{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+    .chart-container{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+    .chart-wrapper{position:relative;height:300px}
+    .settings-section{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+    .settings-section h3{font-size:16px;font-weight:800;margin-bottom:16px}
+    .setting-item{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+    .setting-item:last-child{border-bottom:none}
+    .list-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+    .list-item-info{flex:1}
+    .list-item-title{font-size:15px;font-weight:700;margin-bottom:4px}
+    .list-item-subtitle{font-size:12px;color:var(--muted)}
+    .empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+    .empty-icon{font-size:64px;margin-bottom:16px;opacity:0.5}
+    .alert{padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:14px}
+    .alert-warning{background:rgba(245,158,11,0.1);border:1px solid #F59E0B;color:#F59E0B}
+    .alert-danger{background:rgba(239,68,68,0.1);border:1px solid #EF4444;color:#EF4444}
+    .alert-success{background:rgba(16,185,129,0.1);border:1px solid #10B981;color:#10B981}
+    .quick-add-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:16px}
+    .quick-add-btn{padding:12px;background:var(--light);border:1px solid var(--border);border-radius:8px;text-align:center;cursor:pointer;transition:all 0.2s;font-size:13px}
+    .quick-add-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+    @media(max-width:768px){.stats-grid{grid-template-columns:1fr}.main{padding:70px 16px 16px}}
+  </style>
+</head>
+<body>
+
+<div class="hamburger" onclick="toggleMenu()">
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+
+<div class="overlay-menu" onclick="toggleMenu()"></div>
+
+<aside class="sidebar">
+  <div class="logo">💪 FitGrow</div>
+  <div class="nav-item active" onclick="navigateTo('dashboard')">
+    <span class="nav-icon">📊</span>
+    <span>Dashboard</span>
+  </div>
+  <div class="nav-item" onclick="navigateTo('scanner')">
+    <span class="nav-icon">📸</span>
+    <span>Food Scanner</span>
+  </div>
+  <div class="nav-item" onclick="navigateTo('progress')">
+    <span class="nav-icon">📊</span>
+    <span>Progress</span>
+  </div>
+  <div class="nav-item" onclick="navigateTo('settings')">
+    <span class="nav-icon">⚙️</span>
+    <span>Settings</span>
+  </div>
+</aside>
+
+<main class="main">
+  
+  <div id="dashboardPage" class="page active">
+    <div class="welcome-banner">
+      <h2>Welcome back, <span id="welcomeName">Guest</span>! 🔥</h2>
+      <p>Keep crushing your fitness goals</p>
+    </div>
+    
+    <div class="stats-grid">
+      <div class="stat-card" onclick="showAddModal('calories')">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-label">Calories</div>
+        <div class="stat-value" id="calories">0</div>
+        <div class="stat-goal">Goal: <span id="goalCal">3000</span> kcal</div>
+        <div class="progress-bar"><div class="progress-fill" id="calProg"></div></div>
+      </div>
+      
+      <div class="stat-card" onclick="showAddModal('protein')">
+        <div class="stat-icon">🥩</div>
+        <div class="stat-label">Protein</div>
+        <div class="stat-value" id="protein">0g</div>
+        <div class="stat-goal">Goal: <span id="goalProtein">150</span>g</div>
+        <div class="progress-bar"><div class="progress-fill" id="proteinProg"></div></div>
+      </div>
+      
+      <div class="stat-card" onclick="showAddModal('carbs')">
+        <div class="stat-icon">🍞</div>
+        <div class="stat-label">Carbs</div>
+        <div class="stat-value" id="carbs">0g</div>
+        <div class="stat-goal">Goal: <span id="goalCarbs">250</span>g</div>
+        <div class="progress-bar"><div class="progress-fill" id="carbsProg"></div></div>
+      </div>
+      
+      <div class="stat-card" onclick="showAddModal('fat')">
+        <div class="stat-icon">🧈</div>
+        <div class="stat-label">Fat</div>
+        <div class="stat-value" id="fat">0g</div>
+        <div class="stat-goal">Goal: <span id="goalFat">80</span>g</div>
+        <div class="progress-bar"><div class="progress-fill" id="fatProg"></div></div>
+      </div>
+      
+      <div class="stat-card" onclick="showAddModal('water')">
+        <div class="stat-icon">💧</div>
+        <div class="stat-label">Water</div>
+        <div class="stat-value" id="water">0.0L</div>
+        <div class="stat-goal">Goal: <span id="goalWater">2.5</span>L</div>
+        <div class="progress-bar"><div class="progress-fill" id="waterProg"></div></div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="scannerPage" class="page">
+    <div class="page-header">
+      <h1>Food Scanner 📸</h1>
+      <p>Scan food to track nutrition</p>
+    </div>
+    
+    <div id="httpsWarning" class="alert alert-warning hidden">
+      ⚠️ Camera requires HTTPS. Deploy to secure hosting or use localhost.
+    </div>
+    
+    <div id="apiKeyWarning" class="alert alert-warning hidden">
+      ⚠️ Claude API key not set. Using mock data. <a href="#" onclick="showApiKeyModal()" style="color:var(--primary);text-decoration:underline">Set API Key</a>
+    </div>
+    
+    <div class="camera-container">
+      <video id="camera" autoplay playsinline></video>
+      <canvas id="canvas"></canvas>
+      <div class="camera-controls">
+        <button class="btn btn-primary" onclick="startCamera()">📷 Open Camera</button>
+        <button class="btn btn-secondary hidden" id="captureBtn" onclick="capturePhoto()">✅ Capture</button>
+        <button class="btn btn-danger hidden" id="stopBtn" onclick="stopCamera()">❌ Close</button>
+      </div>
+    </div>
+    
+    <div id="scanResult" class="hidden" style="margin-top:24px;"></div>
+  </div>
+  
+  <div id="progressPage" class="page">
+    <div class="page-header">
+      <h1>Progress 📊</h1>
+      <p>Your 7-day fitness analytics</p>
+    </div>
+    
+    <div class="chart-container">
+      <h3 style="margin-bottom:16px;">Weekly Calories</h3>
+      <div class="chart-wrapper">
+        <canvas id="caloriesChart"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <h3 style="margin-bottom:16px;">Macros Breakdown (Today)</h3>
+      <div class="chart-wrapper">
+        <canvas id="macrosChart"></canvas>
+      </div>
+    </div>
+    
+    <div class="chart-container">
+      <h3 style="margin-bottom:16px;">Statistics</h3>
+      <div class="list-item">
+        <div class="list-item-info">
+          <div class="list-item-title">Total Calories (7 days)</div>
+          <div class="list-item-subtitle" id="totalCals">0 kcal</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-item-info">
+          <div class="list-item-title">Average Daily Calories</div>
+          <div class="list-item-subtitle" id="avgCals">0 kcal</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-item-info">
+          <div class="list-item-title">Best Day</div>
+          <div class="list-item-subtitle" id="bestDay">N/A</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div id="settingsPage" class="page">
+    <div class="page-header">
+      <h1>Settings ⚙️</h1>
+      <p>Manage your account & preferences</p>
+    </div>
+    
+    <div class="settings-section">
+      <h3>Account</h3>
+      <div class="setting-item">
+        <span>User</span>
+        <strong id="settingsUser">Guest</strong>
+      </div>
+      <div class="setting-item">
+        <span>Status</span>
+        <strong id="settingsStatus">Offline</strong>
+      </div>
+      <button class="btn btn-primary btn-full" id="loginBtn" onclick="showAuthModal()" style="margin-top:16px;">🔐 Login / Sign Up</button>
+      <button class="btn btn-secondary btn-full hidden" id="syncBtn" onclick="syncData()" style="margin-top:8px;">☁️ Sync Now</button>
+      <button class="btn btn-danger btn-full hidden" id="logoutBtn" onclick="logout()" style="margin-top:8px;">🚪 Logout</button>
+    </div>
+    
+    <div class="settings-section">
+      <h3>Daily Goals</h3>
+      <div class="form-group">
+        <label class="form-label">Calories (kcal)</label>
+        <input type="number" id="setCal" class="form-input" value="3000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Protein (g)</label>
+        <input type="number" id="setProtein" class="form-input" value="150">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Carbs (g)</label>
+        <input type="number" id="setCarbs" class="form-input" value="250">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fat (g)</label>
+        <input type="number" id="setFat" class="form-input" value="80">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Water (L)</label>
+        <input type="number" id="setWater" class="form-input" value="2.5" step="0.1">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveGoals()">💾 Save Goals</button>
+    </div>
+    
+    <div class="settings-section">
+      <h3>Claude API</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Set your Claude API key for real food scanning</p>
+      <button class="btn btn-secondary btn-full" onclick="showApiKeyModal()">🔑 Configure API Key</button>
+    </div>
+    
+    <div class="settings-section">
+      <h3>Data Management</h3>
+      <button class="btn btn-secondary btn-full" onclick="exportJSON()" style="margin-bottom:8px;">📥 Export JSON</button>
+      <button class="btn btn-secondary btn-full" onclick="exportCSV()" style="margin-bottom:8px;">📥 Export CSV</button>
+      <button class="btn btn-danger btn-full" onclick="resetAll()">🗑️ Reset All Data</button>
+    </div>
+  </div>
+  
+</main>
+
+<div id="addModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="addModalTitle">Add Nutrient</h2>
+      <button class="modal-close" onclick="closeAddModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Quick Add (Common Foods)</label>
+        <select id="quickAddSelect" class="form-select" onchange="fillQuickAdd()">
+          <option value="">Select food...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Custom Amount</label>
+        <input type="number" id="customAmount" class="form-input" placeholder="Enter amount">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="addNutrient()">✅ Add</button>
+    </div>
+  </div>
+</div>
+
+<div id="authModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="authTitle">Login</h2>
+      <button class="modal-close" onclick="closeAuthModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group hidden" id="usernameGroup">
+        <label class="form-label">Username</label>
+        <input type="text" id="authUsername" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="authEmail" class="form-input">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" id="authPassword" class="form-input">
+      </div>
+      <div id="authError" class="hidden" style="color:var(--danger);margin-bottom:12px;font-size:13px;"></div>
+      <button class="btn btn-primary btn-full" id="authSubmit" onclick="submitAuth()">Login</button>
+      <p style="text-align:center;margin-top:12px;font-size:13px;color:var(--muted);">
+        <span id="authToggle">Don't have an account?</span>
+        <a href="#" onclick="toggleAuthMode(event)" style="color:var(--primary);text-decoration:none;font-weight:700;margin-left:6px;">Sign Up</a>
+      </p>
+      <p style="text-align:center;margin-top:8px;">
+        <a href="#" onclick="guestMode(event)" style="color:var(--primary);text-decoration:none;font-size:13px;">Continue as Guest</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="apiKeyModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>Claude API Key</h2>
+      <button class="modal-close" onclick="closeApiKeyModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px;">Get your API key from: <a href="https://console.anthropic.com" target="_blank" style="color:var(--primary)">console.anthropic.com</a></p>
+      <div class="form-group">
+        <label class="form-label">API Key</label>
+        <input type="password" id="apiKeyInput" class="form-input" placeholder="sk-ant-...">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="saveApiKey()">💾 Save Key</button>
+      <button class="btn btn-secondary btn-full" onclick="clearApiKey()" style="margin-top:8px;">🗑️ Remove Key</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const FOODS={
+  calories:[
+    {name:'Banana (medium)',val:105},
+    {name:'Apple (medium)',val:95},
+    {name:'Chicken Breast (100g)',val:165},
+    {name:'Brown Rice (1 cup)',val:218},
+    {name:'Protein Shake',val:180}
+  ],
+  protein:[
+    {name:'Chicken Breast (100g)',val:31},
+    {name:'Salmon (100g)',val:25},
+    {name:'Greek Yogurt (1 cup)',val:20},
+    {name:'Eggs (2 large)',val:12},
+    {name:'Protein Powder (1 scoop)',val:25}
+  ],
+  carbs:[
+    {name:'Banana (medium)',val:27},
+    {name:'Brown Rice (1 cup)',val:45},
+    {name:'Sweet Potato (medium)',val:26},
+    {name:'Oats (1 cup)',val:54},
+    {name:'Whole Wheat Bread (2 slices)',val:24}
+  ],
+  fat:[
+    {name:'Avocado (half)',val:15},
+    {name:'Almonds (28g)',val:14},
+    {name:'Olive Oil (1 tbsp)',val:14},
+    {name:'Salmon (100g)',val:13},
+    {name:'Peanut Butter (2 tbsp)',val:16}
+  ],
+  water:[
+    {name:'Glass (250ml)',val:0.25},
+    {name:'Bottle (500ml)',val:0.5},
+    {name:'Large Bottle (1L)',val:1},
+    {name:'Small sip (100ml)',val:0.1}
+  ]
+};
+
+let user=JSON.parse(localStorage.getItem('mockUser')||'null');
+let token=localStorage.getItem('mockToken');
+let goals=JSON.parse(localStorage.getItem('goals')||'{"calories":3000,"protein":150,"carbs":250,"fat":80,"water":2.5}');
+let history=JSON.parse(localStorage.getItem('history')||'[]');
+let stream=null;
+let currentType='';
+let authMode='login';
+let charts={};
+
+init();
+
+function init(){
+  checkHTTPS();
+  checkApiKey();
+  loadUser();
+  loadGoals();
+  loadStats();
+  updateCharts();
+  checkReset();
+}
+
+function checkHTTPS(){
+  if(location.protocol!=='https:'&&location.hostname!=='localhost'&&location.hostname!=='127.0.0.1'){
+    document.getElementById('httpsWarning').classList.remove('hidden');
+  }
+}
+
+function checkApiKey(){
+  if(!localStorage.getItem('claudeApiKey')){
+    document.getElementById('apiKeyWarning')?.classList.remove('hidden');
+  }
+}
+
+function loadUser(){
+  if(user){
+    document.getElementById('welcomeName').textContent=user.username;
+    document.getElementById('settingsUser').textContent=user.username;
+    document.getElementById('settingsStatus').textContent='Online';
+    document.getElementById('loginBtn').classList.add('hidden');
+    document.getElementById('syncBtn').classList.remove('hidden');
+    document.getElementById('logoutBtn').classList.remove('hidden');
+  }
+}
+
+function loadGoals(){
+  ['calories','protein','carbs','fat','water'].forEach(t=>{
+    document.getElementById('goal'+t.charAt(0).toUpperCase()+t.slice(1)).textContent=goals[t];
+    document.getElementById('set'+t.charAt(0).toUpperCase()+t.slice(1)).value=goals[t];
+  });
+}
+
+function loadStats(){
+  const today=new Date().toDateString();
+  const stats=JSON.parse(localStorage.getItem('stats_'+today)||'{"calories":0,"protein":0,"carbs":0,"fat":0,"water":0}');
+  document.getElementById('calories').textContent=stats.calories;
+  document.getElementById('protein').textContent=stats.protein+'g';
+  document.getElementById('carbs').textContent=stats.carbs+'g';
+  document.getElementById('fat').textContent=stats.fat+'g';
+  document.getElementById('water').textContent=stats.water.toFixed(1)+'L';
+  ['calories','protein','carbs','fat','water'].forEach(t=>updateProg(t,stats[t]));
+}
+
+function saveStats(){
+  const today=new Date().toDateString();
+  const stats={
+    calories:parseInt(document.getElementById('calories').textContent)||0,
+    protein:parseInt(document.getElementById('protein').textContent)||0,
+    carbs:parseInt(document.getElementById('carbs').textContent)||0,
+    fat:parseInt(document.getElementById('fat').textContent)||0,
+    water:parseFloat(document.getElementById('water').textContent)||0
+  };
+  localStorage.setItem('stats_'+today,JSON.stringify(stats));
+  
+  const hist=JSON.parse(localStorage.getItem('history')||'[]');
+  const existing=hist.findIndex(h=>h.date===today);
+  if(existing>=0)hist[existing]=Object.assign({date:today},stats);
+  else hist.push(Object.assign({date:today},stats));
+  if(hist.length>7)hist.shift();
+  localStorage.setItem('history',JSON.stringify(hist));
+}
+
+function checkReset(){
+  const lastDate=localStorage.getItem('lastDate');
+  const today=new Date().toDateString();
+  if(lastDate!==today){
+    localStorage.setItem('lastDate',today);
+  }
+}
+
+function updateProg(type,val){
+  const pct=Math.min((val/goals[type])*100,100);
+  document.getElementById(type+'Prog').style.width=pct+'%';
+}
+
+function toggleMenu(){
+  document.querySelector('.hamburger').classList.toggle('active');
+  document.querySelector('.sidebar').classList.toggle('active');
+  document.querySelector('.overlay-menu').classList.toggle('active');
+}
+
+function navigateTo(page){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(page+'Page').classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  event.target.closest('.nav-item').classList.add('active');
+  toggleMenu();
+  if(page==='progress')updateCharts();
+}
+
+function showAddModal(type){
+  currentType=type;
+  document.getElementById('addModalTitle').textContent='Add '+type.charAt(0).toUpperCase()+type.slice(1);
+  const sel=document.getElementById('quickAddSelect');
+  sel.innerHTML='<option value="">Select food...</option>';
+  FOODS[type].forEach(f=>sel.innerHTML+=`<option value="${f.val}">${f.name} (${f.val}${type==='water'?'L':type==='calories'?'':' g'})</option>`);
+  document.getElementById('customAmount').value='';
+  document.getElementById('addModal').classList.remove('hidden');
+}
+
+function closeAddModal(){
+  document.getElementById('addModal').classList.add('hidden');
+}
+
+function fillQuickAdd(){
+  const val=document.getElementById('quickAddSelect').value;
+  if(val)document.getElementById('customAmount').value=val;
+}
+
+function addNutrient(){
+  const amt=parseFloat(document.getElementById('customAmount').value);
+  if(!amt||amt<=0){alert('⚠️ Enter valid amount');return;}
+  
+  const el=document.getElementById(currentType);
+  let cur=parseFloat(el.textContent)||0;
+  cur+=amt;
+  
+  if(currentType==='water'){
+    el.textContent=cur.toFixed(1)+'L';
+  }else if(currentType==='calories'){
+    el.textContent=Math.round(cur);
+  }else{
+    el.textContent=Math.round(cur)+'g';
+  }
+  
+  updateProg(currentType,cur);
+  saveStats();
+  closeAddModal();
+}
+
+async function startCamera(){
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
+    document.getElementById('camera').srcObject=stream;
+    document.getElementById('captureBtn').classList.remove('hidden');
+    document.getElementById('stopBtn').classList.remove('hidden');
+  }catch(e){
+    alert('❌ Camera access denied: '+e.message);
+  }
+}
+
+function stopCamera(){
+  if(stream){
+    stream.getTracks().forEach(t=>t.stop());
+    document.getElementById('camera').srcObject=null;
+    document.getElementById('captureBtn').classList.add('hidden');
+    document.getElementById('stopBtn').classList.add('hidden');
+  }
+}
+
+async function capturePhoto(){
+  const video=document.getElementById('camera');
+  const canvas=document.getElementById('canvas');
+  canvas.width=video.videoWidth;
+  canvas.height=video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  const img=canvas.toDataURL('image/jpeg',0.8);
+  stopCamera();
+  
+  const apiKey=localStorage.getItem('claudeApiKey');
+  if(apiKey){
+    await analyzeWithClaude(img,apiKey);
+  }else{
+    analyzeMock();
+  }
+}
+
+async function analyzeWithClaude(img,key){
+  alert('🔄 Analyzing...');
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({
+        model:'claude-3-5-sonnet-20241022',
+        max_tokens:1000,
+        messages:[{
+          role:'user',
+          content:[
+            {type:'image',source:{type:'base64',media_type:'image/jpeg',data:img.split(',')[1]}},
+            {type:'text',text:'Analyze this food. Return ONLY valid JSON: {"name":"food name","calories":number,"protein":number,"carbs":number,"fat":number}'}
+          ]
+        }]
+      })
+    });
+    
+    if(!resp.ok)throw new Error('API error');
+    
+    const data=await resp.json();
+    const text=data.content.find(c=>c.type==='text')?.text||'{}';
+    const food=JSON.parse(text.replace(/```json|```/g,'').trim());
+    applyFood(food);
+  }catch(e){
+    alert('❌ Analysis failed. Using mock data.');
+    analyzeMock();
+  }
+}
+
+function analyzeMock(){
+  const foods=[
+    {name:'Grilled Chicken',calories:350,protein:45,carbs:0,fat:12},
+    {name:'Salmon Fillet',calories:420,protein:38,carbs:0,fat:24},
+    {name:'Protein Shake',calories:180,protein:30,carbs:12,fat:3},
+    {name:'Brown Rice Bowl',calories:280,protein:6,carbs:58,fat:2},
+    {name:'Egg Omelette',calories:320,protein:24,carbs:4,fat:22}
+  ];
+  const food=foods[Math.floor(Math.random()*foods.length)];
+  applyFood(food);
+}
+
+function applyFood(food){
+  ['calories','protein','carbs','fat'].forEach(t=>{
+    const el=document.getElementById(t);
+    let cur=parseFloat(el.textContent)||0;
+    cur+=food[t];
+    if(t==='calories')el.textContent=Math.round(cur);
+    else el.textContent=Math.round(cur)+'g';
+    updateProg(t,cur);
+  });
+  saveStats();
+  alert(`✅ ${food.name}\n\n${food.calories} cal • ${food.protein}g protein • ${food.carbs}g carbs • ${food.fat}g fat`);
+}
+
+function showAuthModal(){
+  document.getElementById('authModal').classList.remove('hidden');
+}
+
+function closeAuthModal(){
+  document.getElementById('authModal').classList.add('hidden');
+}
+
+function toggleAuthMode(e){
+  e.preventDefault();
+  if(authMode==='login'){
+    authMode='signup';
+    document.getElementById('authTitle').textContent='Sign Up';
+    document.getElementById('authSubmit').textContent='Sign Up';
+    document.getElementById('authToggle').textContent='Already have an account?';
+    document.getElementById('usernameGroup').classList.remove('hidden');
+  }else{
+    authMode='login';
+    document.getElementById('authTitle').textContent='Login';
+    document.getElementById('authSubmit').textContent='Login';
+    document.getElementById('authToggle').textContent="Don't have an account?";
+    document.getElementById('usernameGroup').classList.add('hidden');
+  }
+}
+
+function submitAuth(){
+  const email=document.getElementById('authEmail').value;
+  const pass=document.getElementById('authPassword').value;
+  const username=document.getElementById('authUsername').value;
+  
+  if(!email||!pass){
+    document.getElementById('authError').textContent='⚠️ Fill all fields';
+    document.getElementById('authError').classList.remove('hidden');
+    return;
+  }
+  
+  if(authMode==='signup'&&!username){
+    document.getElementById('authError').textContent='⚠️ Username required';
+    document.getElementById('authError').classList.remove('hidden');
+    return;
+  }
+  
+  const users=JSON.parse(localStorage.getItem('mockUsers')||'[]');
+  
+  if(authMode==='login'){
+    const found=users.find(u=>u.email===email&&u.password===pass);
+    if(found){
+      user=found;
+      token='mock_token_'+Date.now();
+      localStorage.setItem('mockUser',JSON.stringify(user));
+      localStorage.setItem('mockToken',token);
+      loadUser();
+      closeAuthModal();
+      alert('✅ Welcome back '+user.username+'!');
+    }else{
+      document.getElementById('authError').textContent='❌ Invalid credentials';
+      document.getElementById('authError').classList.remove('hidden');
+    }
+  }else{
+    if(users.find(u=>u.email===email)){
+      document.getElementById('authError').textContent='❌ Email already exists';
+      document.getElementById('authError').classList.remove('hidden');
+      return;
+    }
+    user={username,email,password:pass};
+    token='mock_token_'+Date.now();
+    users.push(user);
+    localStorage.setItem('mockUsers',JSON.stringify(users));
+    localStorage.setItem('mockUser',JSON.stringify(user));
+    localStorage.setItem('mockToken',token);
+    loadUser();
+    closeAuthModal();
+    alert('✅ Welcome '+user.username+'!');
+  }
+}
+
+function guestMode(e){
+  e.preventDefault();
+  closeAuthModal();
+  alert('✅ Welcome Guest!');
+}
+
+function logout(){
+  if(!confirm('Logout?'))return;
+  user=null;
+  token=null;
+  localStorage.removeItem('mockUser');
+  localStorage.removeItem('mockToken');
+  document.getElementById('welcomeName').textContent='Guest';
+  document.getElementById('settingsUser').textContent='Guest';
+  document.getElementById('settingsStatus').textContent='Offline';
+  document.getElementById('loginBtn').classList.remove('hidden');
+  document.getElementById('syncBtn').classList.add('hidden');
+  document.getElementById('logoutBtn').classList.add('hidden');
+  alert('✅ Logged out');
+}
+
+function syncData(){
+  if(!user){alert('⚠️ Login first');return;}
+  alert('☁️ Syncing...');
+  setTimeout(()=>alert('✅ Data synced!'),1000);
+}
+
+function saveGoals(){
+  goals={
+    calories:parseInt(document.getElementById('setCal').value)||3000,
+    protein:parseInt(document.getElementById('setProtein').value)||150,
+    carbs:parseInt(document.getElementById('setCarbs').value)||250,
+    fat:parseInt(document.getElementById('setFat').value)||80,
+    water:parseFloat(document.getElementById('setWater').value)||2.5
+  };
+  localStorage.setItem('goals',JSON.stringify(goals));
+  loadGoals();
+  alert('✅ Goals saved!');
+}
+
+function showApiKeyModal(){
+  document.getElementById('apiKeyInput').value=localStorage.getItem('claudeApiKey')||'';
+  document.getElementById('apiKeyModal').classList.remove('hidden');
+}
+
+function closeApiKeyModal(){
+  document.getElementById('apiKeyModal').classList.add('hidden');
+}
+
+function saveApiKey(){
+  const key=document.getElementById('apiKeyInput').value.trim();
+  if(!key){alert('⚠️ Enter API key');return;}
+  localStorage.setItem('claudeApiKey',key);
+  document.getElementById('apiKeyWarning')?.classList.add('hidden');
+  closeApiKeyModal();
+  alert('✅ API key saved!');
+}
+
+function clearApiKey(){
+  if(!confirm('Remove API key?'))return;
+  localStorage.removeItem('claudeApiKey');
+  document.getElementById('apiKeyWarning')?.classList.remove('hidden');
+  closeApiKeyModal();
+  alert('✅ API key removed');
+}
+
+function exportJSON(){
+  const data={goals,stats:{}};
+  const hist=JSON.parse(localStorage.getItem('history')||'[]');
+  hist.forEach(h=>data.stats[h.date]=h);
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='fitgrow-data.json';
+  a.click();
+  alert('✅ JSON exported!');
+}
+
+function exportCSV(){
+  const hist=JSON.parse(localStorage.getItem('history')||'[]');
+  let csv='Date,Calories,Protein,Carbs,Fat,Water\n';
+  hist.forEach(h=>csv+=`${h.date},${h.calories},${h.protein},${h.carbs},${h.fat},${h.water}\n`);
+  const blob=new Blob([csv],{type:'text/csv'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='fitgrow-history.csv';
+  a.click();
+  alert('✅ CSV exported!');
+}
+
+function resetAll(){
+  if(!confirm('⚠️ Reset ALL data? Cannot be undone!'))return;
+  ['mockUser','mockToken','goals','history','lastDate','claudeApiKey'].forEach(k=>localStorage.removeItem(k));
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(key.startsWith('stats_'))localStorage.removeItem(key);
+  }
+  location.reload();
+}
+
+function updateCharts(){
+  const hist=JSON.parse(localStorage.getItem('history')||'[]');
+  const labels=[];
+  const calData=[];
+  
+  for(let i=6;i>=0;i--){
+    const d=new Date();
+    d.setDate(d.getDate()-i);
+    const dateStr=d.toDateString();
+    labels.push(d.toLocaleDateString('en-US',{weekday:'short'}));
+    const found=hist.find(h=>h.date===dateStr);
+    calData.push(found?found.calories:0);
+  }
+  
+  if(charts.cal)charts.cal.destroy();
+  const ctx1=document.getElementById('caloriesChart');
+  charts.cal=new Chart(ctx1,{
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:'Calories',
+        data:calData,
+        borderColor:'#3B82F6',
+        backgroundColor:'rgba(59,130,246,0.1)',
+        tension:0.4
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true}}
+    }
+  });
+  
+  const today=new Date().toDateString();
+  const todayStats=JSON.parse(localStorage.getItem('stats_'+today)||'{"protein":0,"carbs":0,"fat":0}');
+  
+  if(charts.macros)charts.macros.destroy();
+  const ctx2=document.getElementById('macrosChart');
+  charts.macros=new Chart(ctx2,{
+    type:'bar',
+    data:{
+      labels:['Protein','Carbs','Fat'],
+      datasets:[{
+        label:'Grams',
+        data:[todayStats.protein,todayStats.carbs,todayStats.fat],
+        backgroundColor:['#10B981','#3B82F6','#EF4444']
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{y:{beginAtZero:true}}
+    }
+  });
+  
+  const total=calData.reduce((a,b)=>a+b,0);
+  const avg=total>0?Math.round(total/7):0;
+  const best=Math.max(...calData);
+  const bestIdx=calData.indexOf(best);
+  
+  document.getElementById('totalCals').textContent=total.toLocaleString()+' kcal';
+  document.getElementById('avgCals').textContent=avg.toLocaleString()+' kcal';
+  document.getElementById('bestDay').textContent=best>0?`${labels[bestIdx]} (${best} kcal)`:'N/A';
+}
+</script>
+
+</body>
+</html>
